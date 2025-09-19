@@ -1,0 +1,8 @@
+ .active {
+    font-weight: bold;
+    color: yellow !important;
+  }
+  .navbar {
+  position: relative; 
+  z-index: 1000;     
+}
