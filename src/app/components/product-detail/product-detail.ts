@@ -1,26 +1,33 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Iproduct } from '../../models/iproduct';
-import { inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ProductsService } from '../../service/services/products';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ProductsService } from '../../service/services/products';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule, RouterLink],
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './product-detail.html',
-  styleUrl: './product-detail.css'
+  styleUrls: []
 })
 export class ProductDetail implements OnInit {
-
   private route = inject(ActivatedRoute);
-  private productService = inject(ProductsService);
+  private svc = inject(ProductsService);
+  product: any;
+  loading = false;
 
-  product?: Iproduct;
-
-  ngOnInit(): void {
+  async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.product = this.productService.getProductByID(id);   
+    if (id) {
+      this.loading = true;
+      try {
+        this.product = await this.svc.getProductById(id);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.loading = false;
+      }
+    }
   }
 }
+

@@ -1,10 +1,10 @@
-export interface Iproduct {
-    id:number;
-    name:string;
-    price:number;
-    quantity:number;
-    img:string;
-    description:string;
-     creditCard: string; 
 
+export interface Iproduct {
+  id: number;
+  title: string;
+  price: number;
+  description?: string;
+  category?: string;
+  image?: string;
+  
 }

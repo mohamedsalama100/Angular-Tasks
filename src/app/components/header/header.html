@@ -1,53 +1,23 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container">
-    <a class="navbar-brand" routerLink="/home">Store</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <a class="navbar-brand" routerLink="/products">Store</a>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" routerLinkActive="active"
-            >Home</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/about" routerLinkActive="active"
-            >About</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/contact" routerLinkActive="active"
-            >Contact</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/products" routerLinkActive="active"
-            >Products</a
-          >
-        </li>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" routerLink="/products" routerLinkActive="active">Products</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/search-products" routerLinkActive="active">Search</a></li>
       </ul>
 
-      <!-- Auth buttons -->
       <div>
-        @if (!isLoggedIn) {
-          <button class="btn btn-primary" routerLink="/login">Login</button>
-          <button class="btn btn-primary ms-3" routerLink="/register">
-            Register
-          </button>
+        @if (!auth.isLoggedIn()) {
+          <button class="btn btn-primary me-2" routerLink="/login">Login</button>
+          <button class="btn btn-outline-light" routerLink="/register">Register</button>
         } @else {
           <button class="btn btn-secondary" (click)="logout()">Logout</button>
         }
       </div>
+     
     </div>
   </div>
 </nav>
+

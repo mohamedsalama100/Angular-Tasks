@@ -1,68 +1,28 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Iproduct } from '../../models/iproduct';
-import {  FormsModule } from '@angular/forms';
-import { CardShadow } from "../../directives/card-shadow";
-import { CurrencyPipe, DatePipe } from '@angular/common';
-import { CreditCardPipe } from "../../pipe/credit-card-pipe";
-import { ProductDetail } from '../product-detail/product-detail';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ProductsService } from '../../service/services/products';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-products',
-  imports: [FormsModule, CardShadow, CurrencyPipe, DatePipe, CreditCardPipe ,ProductDetail , CardShadow,RouterLink ],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './products.html',
-  styleUrl: './products.css'
+  styleUrls: ['./products.css']
 })
-export class Products implements OnInit {
+export class ProductsComponent implements OnInit {
+  products: any[] = [];
+  loading = false;
+  private productsSvc = inject(ProductsService);
 
-  currentDate: Date = new Date();
-
- 
-  products: Iproduct[] = [];
-  filteredProducts: Iproduct[] = [];
-
-  searchTerm: string = '';
-  selectedProduct?: Iproduct;
-
-
-  private productService = inject(ProductsService);
-
-  ngOnInit(): void {
-
-    this.products = this.productService.getAllProducts();
-    this.filteredProducts = [...this.products];
-  }
-
-  searchByName() {
-    const term = this.searchTerm.toLowerCase().trim();
-
-    if (!term) {
-      this.filteredProducts = [...this.products];
-    } else {
-      this.filteredProducts = this.products.filter(p =>
-        p.name.toLowerCase().includes(term)
-      );
+  async ngOnInit() {
+    this.loading = true;
+    try {
+      this.products = await this.productsSvc.getAllProducts();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loading = false;
     }
   }
-
-  addToCart(p: Iproduct) {
-    if (p.quantity == 1) {
-      p.quantity--;
-    } else {
-      p.quantity = p.quantity - 2;
-    }
-  }
-
-  // toggleDetails(p: Iproduct) {
-  //   if (this.selectedProduct && this.selectedProduct.id === p.id) {
-  //     this.selectedProduct = undefined; // close
-  //   } else {
-  //     this.selectedProduct = p; // open
-  //   }
-  // }
-
-  // onCloseDetails() {
-  //   this.selectedProduct = undefined;
-  // }
 }

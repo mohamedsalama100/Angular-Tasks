@@ -1,29 +1,19 @@
-@if (product) {
-  <div class="card mt-4 p-3 shadow">
-    <div class="row g-3 align-items-center">
-      
-      <!-- الصورة -->
+@if (loading) {
+  <div class="text-center">Loading...</div>
+} @else if (!product) {
+  <div class="alert alert-warning">Product not found</div>
+} @else {
+  <div class="card p-3">
+    <div class="row g-3">
       <div class="col-md-4">
-        <img [src]="product.img" 
-             class="img-fluid rounded w-50 shadow-sm" 
-             alt="{{ product.name }}">
+        <img [src]="product.image" class="img-fluid" alt="">
       </div>
-
-      <!-- تفاصيل المنتج -->
       <div class="col-md-8">
-        <h3 class="text-success">{{ product.name }}</h3>
-        <p><b>Price:</b> {{ product.price | currency:'USD' }}</p>
-        <p><b>Description:</b> {{ product.description }}</p>
-        <p><b>Quantity:</b> {{ product.quantity }}</p>
-
-        <!-- زر الرجوع -->
-        <a routerLink="/products" class="btn btn-success   mt-3">
-          ⬅ Back to Products
-        </a>
+        <h3>{{ product.title }}</h3>
+        <p>{{ product.description }}</p>
+        <p class="fw-bold">{{ product.price | currency }}</p>
+        <a routerLink="/products" class="btn btn-secondary">Back</a>
       </div>
     </div>
   </div>
-} @else {
-  <h4 class="text-danger mt-4">Product not found</h4>
 }
-

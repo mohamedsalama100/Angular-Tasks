@@ -1,127 +1,58 @@
-<div class="container mt-5">
-  <h2 class="mb-4">Register</h2>
-
+<div class="container mt-4">
+  <h3>Register</h3>
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
     <!-- Full Name -->
     <div class="mb-3">
       <label class="form-label">Full Name</label>
-      <input
-        type="text"
-        class="form-control"
-        formControlName="fullName"
-        [class.is-invalid]="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched"
-        [class.is-valid]="registerForm.get('fullName')?.valid && registerForm.get('fullName')?.touched"
-      />
-      @if (registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched) {
-        <div class="invalid-feedback">Name is required (min 5 chars).</div>
-      } @else if (registerForm.get('fullName')?.valid && registerForm.get('fullName')?.touched) {
-        <div class="valid-feedback">Looks good!</div>
-      }
+      <input type="text" formControlName="fullName" class="form-control" />
+      <div class="text-danger" *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid">
+        Name is required (min 5 chars).
+      </div>
     </div>
 
     <!-- Email -->
     <div class="mb-3">
       <label class="form-label">Email</label>
-      <input
-        type="email"
-        class="form-control"
-        formControlName="email"
-        [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-        [class.is-valid]="registerForm.get('email')?.valid && registerForm.get('email')?.touched"
-      />
-      @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-        <div class="invalid-feedback">Enter a valid email.</div>
-      } @else if (registerForm.get('email')?.valid && registerForm.get('email')?.touched) {
-        <div class="valid-feedback">Looks good!</div>
-      }
+      <input type="email" formControlName="email" class="form-control" />
+      <div class="text-danger" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+        Valid email is required.
+      </div>
     </div>
 
     <!-- Mobiles -->
-    <div formArrayName="mobiles">
-      @for (mobileCtrl of mobiles.controls; track $index) {
-        <div class="mb-3">
-          <label class="form-label">Mobile {{ $index + 1 }}</label>
-          <input
-            type="text"
-            class="form-control"
-            [formControlName]="$index"
-            [class.is-invalid]="mobileCtrl.invalid && mobileCtrl.touched"
-            [class.is-valid]="mobileCtrl.valid && mobileCtrl.touched"
-          />
-          @if (mobileCtrl.invalid && mobileCtrl.touched) {
-            <div class="invalid-feedback">Enter valid Egyptian mobile</div>
-          } @else if (mobileCtrl.valid && mobileCtrl.touched) {
-            <div class="valid-feedback">Valid number</div>
-          }
-
-          @if ($index > 0) {
-            <button
-              type="button"
-              class="btn btn-danger btn-sm mt-2"
-              (click)="removeMobile($index)"
-            >
-              Remove
-            </button>
-          }
+    <div class="mb-3">
+      <label class="form-label">Mobiles</label>
+      <div formArrayName="mobiles">
+        <div *ngFor="let mob of mobiles.controls; let i = index" class="input-group mb-2">
+          <input type="text" [formControlName]="i" class="form-control" placeholder="Enter mobile number" />
+          <button class="btn btn-danger" type="button" (click)="removeMobile(i)" [disabled]="i===0">-</button>
         </div>
-      }
-      <button type="button" class="btn btn-secondary mb-3" (click)="addMobile()">Add Another Mobile</button>
+      </div>
+      <button class="btn btn-secondary btn-sm" type="button" (click)="addMobile()">+ Add Mobile</button>
     </div>
 
     <!-- Password -->
     <div class="mb-3">
       <label class="form-label">Password</label>
-      <input
-        type="password"
-        class="form-control"
-        formControlName="password"
-        [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-        [class.is-valid]="registerForm.get('password')?.valid && registerForm.get('password')?.touched"
-      />
-      @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-        <div class="invalid-feedback">Password must be at least 6 characters.</div>
-      } @else if (registerForm.get('password')?.valid && registerForm.get('password')?.touched) {
-        <div class="valid-feedback">Looks good!</div>
-      }
+      <input type="password" formControlName="password" class="form-control" />
     </div>
 
     <!-- Confirm Password -->
     <div class="mb-3">
       <label class="form-label">Confirm Password</label>
-      <input
-        type="password"
-        class="form-control"
-        formControlName="confirmPassword"
-        [class.is-invalid]="
-          (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) ||
-          registerForm.hasError('passwordMismatch')
-        "
-        [class.is-valid]="
-          registerForm.get('confirmPassword')?.valid &&
-          !registerForm.hasError('passwordMismatch') &&
-          registerForm.get('confirmPassword')?.touched
-        "
-      />
-      @if (registerForm.hasError('passwordMismatch')) {
-        <div class="invalid-feedback">Passwords must match.</div>
-      } @else if (registerForm.get('confirmPassword')?.valid && registerForm.get('confirmPassword')?.touched) {
-        <div class="valid-feedback">Passwords match</div>
-      }
+      <input type="password" formControlName="confirmPassword" class="form-control" />
+      <div class="text-danger" *ngIf="registerForm.errors?.['passwordMismatch']">
+        Passwords do not match.
+      </div>
     </div>
 
-    <!-- Buttons -->
+    <!-- Submit -->
     <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Register</button>
-    <button type="button" class="btn btn-warning ms-2" (click)="onReset()">Reset</button>
   </form>
 
-  <!-- Card after submit -->
-  @if (submittedUser) {
-    <div class="card mt-4 p-3">
-      <h5>Registered User</h5>
-      <p><b>Name:</b> {{ submittedUser.fullName }}</p>
-      <p><b>Email:</b> {{ submittedUser.email }}</p>
-      <p><b>Mobiles:</b> {{ submittedUser.mobiles.join(', ') }}</p>
-    </div>
-  }
+  <!-- Submitted Result -->
+  <div class="mt-4" *ngIf="submitted">
+    <h5>✅ Submitted Data:</h5>
+    <pre>{{ submitted | json }}</pre>
+  </div>
 </div>

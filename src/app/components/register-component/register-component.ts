@@ -1,78 +1,88 @@
+import { Component, OnInit } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormArray,
+  FormControl,
+  FormGroup
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-register-component',
+  selector: 'app-register',
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './register-component.html',
-  styleUrl: './register-component.css'
+  templateUrl: './register-component.html'
 })
-export class RegisterComponent {
-registerForm: FormGroup;
-  submittedUser: any = null;
+export class RegisterComponent implements OnInit {
+  registerForm!: FormGroup;
+  submitted: any = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
     this.registerForm = this.fb.group(
       {
-        fullName: ['', [Validators.required, Validators.minLength(5)]],
-        email: [
-          '',
-          [
-            Validators.required,
-            Validators.email,
-            Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/),
-          ],
-        ],
-        mobiles: this.fb.array([
-          this.fb.control('', [
-            Validators.required,
-            Validators.pattern(/^01[0-9]{9}$/),
-          ]),
+        fullName: this.fb.control<string>('', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.minLength(5)]
+        }),
+        email: this.fb.control<string>('', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.email]
+        }),
+        mobiles: this.fb.array<FormControl<string>>([
+          this.fb.control<string>('', {
+            nonNullable: true,
+            validators: [Validators.required]
+          })
         ]),
-        password: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', Validators.required],
+        password: this.fb.control<string>('', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.minLength(6)]
+        }),
+        confirmPassword: this.fb.control<string>('', {
+          nonNullable: true,
+          validators: [Validators.required]
+        })
       },
-      { validators: this.passwordMatchValidator }
+      {
+        validators: (group) => {
+          const pass = group.get('password')?.value;
+          const confirm = group.get('confirmPassword')?.value;
+          return pass === confirm ? null : { passwordMismatch: true };
+        }
+      }
     );
   }
 
-  get mobiles(): FormArray {
-    return this.registerForm.get('mobiles') as FormArray;
+  // ✅ Getter for mobiles
+  get mobiles() {
+    return this.registerForm.get('mobiles') as FormArray<FormControl<string>>;
   }
 
   addMobile() {
     this.mobiles.push(
-      this.fb.control('', [
-        Validators.required,
-        Validators.pattern(/^01[0-9]{9}$/),
-      ])
+      this.fb.control<string>('', {
+        nonNullable: true,
+        validators: [Validators.required]
+      })
     );
   }
 
-  removeMobile(index: number) {
-    if (index > 0) this.mobiles.removeAt(index);
-  }
-
-  passwordMatchValidator(group: AbstractControl) {
-    const pass = group.get('password')?.value;
-    const confirm = group.get('confirmPassword')?.value;
-    return pass === confirm ? null : { passwordMismatch: true };
+  removeMobile(i: number) {
+    if (i > 0) this.mobiles.removeAt(i);
   }
 
   onSubmit() {
     if (this.registerForm.valid) {
-      this.submittedUser = this.registerForm.value;
+      this.submitted = this.registerForm.getRawValue();
+      console.log('✅ Registered:', this.submitted);
+
       this.registerForm.reset();
       this.mobiles.clear();
       this.addMobile();
     }
-  }
-
-  onReset() {
-    this.registerForm.reset();
-    this.mobiles.clear();
-    this.addMobile();
-    this.submittedUser = null;
   }
 }
