@@ -1,0 +1,26 @@
+
+<div class="mb-3">
+  <div class="input-group">
+    <input [(ngModel)]="query" class="form-control" placeholder="Search products...">
+    <button class="btn btn-primary" (click)="search()">Search</button>
+  </div>
+</div>
+
+@if (loading) {
+  <div>Searching...</div>
+} @else {
+  <div class="row">
+    @for (p of results; track p.id) {
+      <div class="col-md-3 mb-3">
+        <div class="card h-100">
+          <img [src]="p.thumbnail || p.image" class="card-img-top" style="height:160px;object-fit:cover" />
+          <div class="card-body">
+            <h6>{{p.title}}</h6>
+            <p class="small">{{p.brand || p.category}}</p>
+            <p class="fw-bold">{{p.price | currency}}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
